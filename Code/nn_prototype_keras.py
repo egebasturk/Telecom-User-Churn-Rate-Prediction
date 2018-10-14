@@ -6,6 +6,7 @@ import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense
 import pandas as pa
+import math
 
 data = pa.read_csv("../Data/telco-customer-churn/WA_Fn-UseC_-Telco-Customer-Churn_Processed.csv")
 #print(data)
@@ -25,11 +26,14 @@ model.add(Dense(1,activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # Model fitting
-model.fit(features, target_Column, epochs=100, batch_size=5)
+data_div_ratio = 0.60 # 60% training 40% test
+rows = 7043
+training_rows = math.floor(rows * data_div_ratio)
+model.fit(features[training_rows:], target_Column[training_rows:], epochs=100, batch_size=5)
 
 # Evaluate the model
-#scores = model.evaluate(features, target_Column)
-#print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+scores = model.evaluate(features[:training_rows], target_Column[:training_rows])
+print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
 
 # Predict
 predictions = model.predict(features)
