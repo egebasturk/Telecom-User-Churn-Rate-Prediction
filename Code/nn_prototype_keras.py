@@ -1,6 +1,7 @@
 import os
 # Backend change
 os.environ['KERAS_BACKEND'] = 'theano'
+os.environ['THEANO_FLAGS'] = 'device=cuda0, floatX=float32'
 
 import numpy as np
 from keras.models import Sequential
@@ -18,8 +19,8 @@ target_Column = data.iloc[:, 21].copy()
 
 # Model creation
 model = Sequential()
-model.add(Dense(30, input_dim=19, activation='relu'))
-model.add(Dense(15, activation='relu'))
+model.add(Dense(20, input_dim=19, activation='relu'))
+model.add(Dense(5, activation='relu'))
 model.add(Dense(1,activation='sigmoid'))
 
 # Model compiliation
