@@ -5,7 +5,11 @@ This project aims to predict user churn rate using different machine learning al
 
 # Group Members:
 Alba Mustafaj
+
 Alp Ege Baştürk
+
 Berat Biçer
+
 Bora Ecer
+
 Buğra Aydın
