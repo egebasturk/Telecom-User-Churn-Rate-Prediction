@@ -1,7 +1,7 @@
-import os
+#import os
 # Backend change
-os.environ['KERAS_BACKEND'] = 'theano'
-os.environ['THEANO_FLAGS'] = 'device=cuda0, floatX=float32'
+#os.environ['KERAS_BACKEND'] = 'theano'
+#os.environ['THEANO_FLAGS'] = 'device=cuda0, floatX=float32'
 
 import numpy as np
 from keras.models import Sequential
