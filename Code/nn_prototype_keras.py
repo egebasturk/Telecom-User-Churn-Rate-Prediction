@@ -37,7 +37,15 @@ model = Sequential()
 model.add(Dense(20, input_dim=19, activation='relu'))
 model.add(Dense(5, activation='relu'))
 model.add(Dense(1,activation='sigmoid'))
-
+'''
+Complex one
+model.add(Dense(200, input_dim=19, activation='relu'))
+model.add(Dense(150, activation='relu'))
+model.add(Dense(100, activation='relu'))
+model.add(Dense(50, activation='relu'))
+model.add(Dense(25, activation='relu'))
+model.add(Dense(1,activation='sigmoid'))
+'''
 # Model compiliation
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
