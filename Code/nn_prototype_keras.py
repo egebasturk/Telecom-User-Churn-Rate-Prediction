@@ -7,7 +7,7 @@ import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense
 import pandas as pa
-import math
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
@@ -34,23 +34,16 @@ features_test = scaler.transform(features_test)
 # Model creation
 # tells keras to create the model
 model = Sequential()
+
 model.add(Dense(20, input_dim=19, activation='relu'))
 model.add(Dense(5, activation='relu'))
 model.add(Dense(1,activation='sigmoid'))
-'''
-Complex one
-model.add(Dense(200, input_dim=19, activation='relu'))
-model.add(Dense(150, activation='relu'))
-model.add(Dense(100, activation='relu'))
-model.add(Dense(50, activation='relu'))
-model.add(Dense(25, activation='relu'))
-model.add(Dense(1,activation='sigmoid'))
-'''
+
 # Model compiliation
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # Model fitting
-model.fit(features_train, label_train, epochs=100, batch_size=5)
+history = model.fit(features_train, label_train, epochs=100, batch_size=5, verbose=1)
 
 # Evaluate the model
 scores = model.evaluate(features_test, label__test)
@@ -68,4 +61,39 @@ dataFrame.to_csv("../Data/telco-customer-churn/Predictions.csv")
 
 print(confusion_matrix(label__test, predictions))
 print(classification_report(label__test, predictions))
-print("Accuracy:" + str(accuracy_score(label__test, predictions, normalize=True, sample_weight=None) * 100) + "%")
+acc = accuracy_score(label__test, predictions, normalize=True, sample_weight=None)
+print("Accuracy:" + str(acc * 100) + "%")
+
+
+plt.plot(history.history['acc'])
+plt.title('Model accuracy')
+plt.ylabel('Accuracy')
+plt.xlabel('Epoch')
+plt.legend(['Train', 'Test'], loc='upper left')
+plt.axhline(y=acc, color='r')
+plt.ylim(0,1)
+plt.subplot(1,2,1)
+
+#Complex one
+model = Sequential()
+model.add(Dense(200, input_dim=19, activation='relu'))
+model.add(Dense(150, activation='relu'))
+model.add(Dense(100, activation='relu'))
+model.add(Dense(50, activation='relu'))
+model.add(Dense(25, activation='relu'))
+model.add(Dense(1,activation='sigmoid'))
+
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+history = model.fit(features_train, label_train, epochs=100, batch_size=5, verbose=1)
+scores = model.evaluate(features_test, label__test)
+acc = accuracy_score(label__test, predictions, normalize=True, sample_weight=None)
+
+plt.plot(history.history['acc'])
+plt.title('Model accuracy')
+plt.ylabel('Accuracy')
+plt.xlabel('Epoch')
+plt.legend(['Train', 'Test'], loc='upper left')
+plt.axhline(y=acc, color='r')
+plt.ylim(0,1)
+plt.subplot(1,2,2)
+plt.show()
