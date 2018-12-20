@@ -22,7 +22,7 @@ features = np.squeeze(np.asarray(features))
 label_Column = data.iloc[:, 20].copy()
 
 # Using Sklearn data split function
-features_train, features_test, label_train, label__test = train_test_split(features, label_Column, test_size=0.40)
+features_train, features_test, label_train, labels_test = train_test_split(features, label_Column, test_size=0.40)
 
 # Feature scaling. Needed since features vary currently a lot
 scaler = StandardScaler()
@@ -46,7 +46,7 @@ model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']
 history = model.fit(features_train, label_train, epochs=100, batch_size=5, verbose=1)
 
 # Evaluate the model
-scores = model.evaluate(features_test, label__test)
+scores = model.evaluate(features_test, labels_test)
 print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
 
 # Predict
@@ -55,13 +55,13 @@ predictions = model.predict(features_test)
 predictions = [round(x[0]) for x in predictions]
 
 # Saves prediction to a new csv for manual control
-mat ={'Real': np.squeeze(np.asarray(label__test)), 'Predicted': np.squeeze(np.asarray(predictions))}
+mat ={'Real': np.squeeze(np.asarray(labels_test)), 'Predicted': np.squeeze(np.asarray(predictions))}
 dataFrame = pa.DataFrame(data=mat)
 dataFrame.to_csv("../Data/telco-customer-churn/Predictions.csv")
 
-print(confusion_matrix(label__test, predictions))
-print(classification_report(label__test, predictions))
-acc = accuracy_score(label__test, predictions, normalize=True, sample_weight=None)
+print(confusion_matrix(labels_test, predictions))
+print(classification_report(labels_test, predictions))
+acc = accuracy_score(labels_test, predictions, normalize=True, sample_weight=None)
 print("Accuracy:" + str(acc * 100) + "%")
 
 
@@ -85,10 +85,10 @@ model2.add(Dense(1,activation='sigmoid'))
 
 model2.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 history2 = model2.fit(features_train, label_train, epochs=100, batch_size=5, verbose=1)
-scores = model2.evaluate(features_test, label__test)
+scores = model2.evaluate(features_test, labels_test)
 predictions2 = model2.predict(features_test)
 predictions2 = [round(x[0]) for x in predictions2]
-acc = accuracy_score(label__test, predictions2, normalize=True, sample_weight=None)
+acc = accuracy_score(labels_test, predictions2, normalize=True, sample_weight=None)
 
 plt.subplot(1,2,2)
 plt.plot(history2.history['acc'])
