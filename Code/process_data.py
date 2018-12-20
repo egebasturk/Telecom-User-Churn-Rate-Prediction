@@ -2,7 +2,7 @@ import pandas as pa
 import numpy as np
 
 raw_data = pa.read_csv("../Data/telco-customer-churn/WA_Fn-UseC_-Telco-Customer-Churn.csv")
-
+raw_data.drop(labels='customerID', axis=1, inplace=True)
 #print(raw_data)
 # Process fields
 '''
@@ -27,7 +27,8 @@ raw_data.replace(('Yes', 'No', 'Male', 'Female', 'No phone service', 'DSL', 'Fib
                  , (1,    0,     1,       0,               2,          1,       2,              2,                        0,            1,            2,          0,             1,                   2,             3,                                  0), inplace=True)
 #print(raw_data)
 raw_data[['TotalCharges']] = raw_data[['TotalCharges']].apply(pa.to_numeric)
-for column in range(0,21):
-    print(raw_data.iloc[:, column])
 
+raw_data = raw_data.astype({'MonthlyCharges': np.float32, 'TotalCharges':np.float32,})
+
+print(raw_data.dtypes)
 pa.DataFrame.to_csv(raw_data, "../Data/telco-customer-churn/WA_Fn-UseC_-Telco-Customer-Churn_Processed.csv")

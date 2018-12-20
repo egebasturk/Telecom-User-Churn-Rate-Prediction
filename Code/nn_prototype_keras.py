@@ -16,10 +16,10 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 data = pa.read_csv("../Data/telco-customer-churn/WA_Fn-UseC_-Telco-Customer-Churn_Processed.csv")
 #print(data)
 # following separate features and the labels
-features = data.iloc[:, 2:21].copy()
+features = data.iloc[:, 1:20].copy()
 features = np.squeeze(np.asarray(features))
 #print(features)
-label_Column = data.iloc[:, 21].copy()
+label_Column = data.iloc[:, 20].copy()
 
 # Using Sklearn data split function
 features_train, features_test, label_train, label__test = train_test_split(features, label_Column, test_size=0.40)
