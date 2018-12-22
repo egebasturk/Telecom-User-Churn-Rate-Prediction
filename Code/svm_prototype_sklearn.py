@@ -16,7 +16,7 @@ features = np.squeeze(np.asarray(features))
 
 label_Column = data.iloc[:, 20].copy()
 # Using Sklearn data split function
-features_train, features_test, labels_train, labels_test = train_test_split(features, label_Column, test_size=0.20)
+features_train, features_test, labels_train, labels_test = train_test_split(features, label_Column, test_size=0.40)
 
 # Feature scaling. Needed since features vary currently a lot
 scaler = StandardScaler()
@@ -39,7 +39,8 @@ def feature_select():
     print("Selected Features: %s") % fit.support_
     print("Feature Ranking: %s") % fit.ranking_
     return fit
-'''tmp = feature_select()
+'''
+tmp = feature_select()
 i = len(tmp.support_) - 1
 while i >= 0:
     if tmp.support_[i] == True:
@@ -48,24 +49,27 @@ while i >= 0:
         features_train.drop(labels=str(features_train.columns[i]), axis=1, inplace=True)
         features_test.drop(labels=str(features_test.columns[i]), axis=1, inplace=True)
     i -= 1
-'''
+
 print(pa.DataFrame(features_train).head())
-# Param selection
+'''
+# Param selection (takes too much time)
 def select_parameters():
     print("Selecting")
     fold_number = 10
     C_list       = [10**x for x in range(-3,3)]
     gamma_list   = [10**x for x in range(-3,3)]
-    kernel_list  = ['linear', 'rbf']
+    kernel_list  = ['rbf', 'poly']
     param_dict   = {'C': C_list, 'gamma' :gamma_list, 'kernel': kernel_list}
     grid_search = GridSearchCV(SVC(), param_dict, cv=fold_number, n_jobs=6)
 
     grid_search.fit(features_train, labels_train)
     return grid_search
 
-#grid_search = select_parameters()
-#pa.DataFrame.to_csv(pa.DataFrame(grid_search.cv_results_), "../Data/SVM_grid-search_results.csv")
-#print(grid_search.best_params_)
+'''
+grid_search = select_parameters()
+pa.DataFrame.to_csv(pa.DataFrame(grid_search.cv_results_), "../Data/SVM_grid-search_results.csv")
+print(grid_search.best_params_)
+'''
 # Best param {'kernel': 'rbf', 'C': 100, 'gamma': 0.001}
 # Training
 classifier = SVC(kernel='rbf', C=100, gamma=0.001)
@@ -80,7 +84,7 @@ print(classification_report(labels_test, predictions))
 print("Accuracy:" + str(accuracy_score(labels_test, predictions, normalize=True, sample_weight=None) * 100) + "%")
 
 '''
-Manual results:
+Manually stored results:
 tenure  InternetService  TotalCharges
 First 3 77.8566
 
@@ -93,12 +97,14 @@ First 7 78.140
 tenure  InternetService  OnlineSecurity  TechSupport  StreamingTV  StreamingMovies  Contract  PaperlessBilling  MonthlyCharges  TotalCharges
 First 10 79.702
 
-All 80.270
+All features 80.270
 '''
 acc_list = [77.857, 77.856, 78.140, 79.702, 80.270]
 feature_num_list = [3, 5, 7, 10, 19]
 
 plt.figure(1)
+plt.xlabel("Feature Count(Selected best i of features)")
+plt.ylabel("Accuracy")
 plt.scatter(feature_num_list, acc_list)
 
 # Compute roc curve
@@ -126,5 +132,17 @@ plt.ylim([0.0,1.0])
 plt.xlabel("Precision")
 plt.ylabel("Recall")
 plt.title("PRC Curve")
+
+
+total_charges = 108.15
+monthly_charges = 53.85
+single_pred = [1,0,0,0,2,1,0,1,1,1,0,0,0,0,0,1,0,monthly_charges,total_charges]
+pred_result = classifier.predict(np.reshape(single_pred, (1,19)))
+print(pred_result)
+
+while (pred_result == 1) & (monthly_charges > 10):
+    single_pred = [1,0,0,0,2,1,0,1,1,1,0,0,0,0,0,1,0, monthly_charges, total_charges]
+    pred_result = classifier.predict(np.reshape(single_pred, (1, 19)))
+    monthly_charges = monthly_charges / 1.5
 
 plt.show()
