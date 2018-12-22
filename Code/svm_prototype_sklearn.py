@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.feature_selection import RFE
 from sklearn.preprocessing import StandardScaler, PowerTransformer
 from sklearn.svm import SVC
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_curve, auc, precision_recall_curve
 from sklearn.linear_model import LogisticRegression
 
 # Read data, separate features and the labels then split to train and test data
@@ -98,5 +98,33 @@ All 80.270
 acc_list = [77.857, 77.856, 78.140, 79.702, 80.270]
 feature_num_list = [3, 5, 7, 10, 19]
 
+plt.figure(1)
 plt.scatter(feature_num_list, acc_list)
+
+# Compute roc curve
+fpr,tpr, thresholdsr = roc_curve(labels_test, predictions)
+#roc_auc = auc(labels_test, predictions)
+# Plot
+plt.figure(2)
+plt.plot(fpr, tpr)
+plt.plot([0,1], [0,1])
+plt.xlim([0.0,1.0])
+plt.ylim([0.0,1.0])
+plt.xlabel("False Positive Rate")
+plt.ylabel("True Positive Rate")
+plt.title("ROC Curve")
+
+
+# Compute prc curve
+precision, recall, thresholdsp = precision_recall_curve(labels_test, predictions)
+# Plot
+plt.figure(3)
+plt.plot(precision, recall)
+plt.plot([0,1], [0,1])
+plt.xlim([0.0,1.0])
+plt.ylim([0.0,1.0])
+plt.xlabel("Precision")
+plt.ylabel("Recall")
+plt.title("PRC Curve")
+
 plt.show()
