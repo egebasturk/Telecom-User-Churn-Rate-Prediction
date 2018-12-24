@@ -49,9 +49,9 @@ while i >= 0:
         features_train.drop(labels=str(features_train.columns[i]), axis=1, inplace=True)
         features_test.drop(labels=str(features_test.columns[i]), axis=1, inplace=True)
     i -= 1
-
-print(pa.DataFrame(features_train).head())
 '''
+print(pa.DataFrame(features_train).head())
+
 # Param selection (takes too much time)
 def select_parameters():
     print("Selecting")
@@ -99,8 +99,8 @@ First 10 79.702
 
 All features 80.270
 '''
-acc_list = [77.857, 77.856, 78.140, 79.702, 80.270]
-feature_num_list = [3, 5, 7, 10, 19]
+acc_list = [73.31, 77.857, 77.856, 78.140, 79.702, 80.270]
+feature_num_list = [1, 3, 5, 7, 10, 19]
 
 plt.figure(1)
 plt.xlabel("Feature Count(Selected best i of features)")
@@ -125,15 +125,15 @@ plt.title("ROC Curve")
 precision, recall, thresholdsp = precision_recall_curve(labels_test, predictions)
 # Plot
 plt.figure(3)
-plt.plot(precision, recall)
+plt.plot(recall, precision)
 plt.plot([0,1], [0,1])
 plt.xlim([0.0,1.0])
 plt.ylim([0.0,1.0])
-plt.xlabel("Precision")
-plt.ylabel("Recall")
+plt.ylabel("Precision")
+plt.xlabel("Recall")
 plt.title("PRC Curve")
 
-
+plt.show()
 total_charges = 108.15
 monthly_charges = 53.85
 single_pred = [1,0,0,0,2,1,0,1,1,1,0,0,0,0,0,1,0,monthly_charges,total_charges]
@@ -144,5 +144,3 @@ while (pred_result == 1) & (monthly_charges > 10):
     single_pred = [1,0,0,0,2,1,0,1,1,1,0,0,0,0,0,1,0, monthly_charges, total_charges]
     pred_result = classifier.predict(np.reshape(single_pred, (1, 19)))
     monthly_charges = monthly_charges / 1.5
-
-plt.show()
