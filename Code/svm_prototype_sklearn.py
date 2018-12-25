@@ -1,3 +1,7 @@
+'''
+@author Alp Ege Basturk
+Final SVM model
+'''
 import numpy as np
 import pandas as pa
 import matplotlib.pyplot as plt
@@ -31,9 +35,10 @@ features_test.columns = data.iloc[:, 1:20].columns
 
 print(features_train.head())
 # Feature Selection
+# Uncomment to select features
 def feature_select():
     classifier = LogisticRegression()
-    rfe = RFE(classifier, 10)
+    rfe = RFE(classifier, 10) # change this number for num of features
     fit = rfe.fit(features_train, labels_train)
     print("Num Features: %d") % fit.n_features_
     print("Selected Features: %s") % fit.support_
@@ -53,6 +58,7 @@ while i >= 0:
 print(pa.DataFrame(features_train).head())
 
 # Param selection (takes too much time)
+# uncomment to use grid search
 def select_parameters():
     print("Selecting")
     fold_number = 10

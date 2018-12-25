@@ -1,7 +1,11 @@
-#import os
+'''
+@author Alp Ege Basturk
+Final Neural Network model
+'''
+import os
 # Backend change
-#os.environ['KERAS_BACKEND'] = 'theano'
-#os.environ['THEANO_FLAGS'] = 'device=cuda0, floatX=float32'
+os.environ['KERAS_BACKEND'] = 'theano' # Comment out if using Tensodflow
+#os.environ['THEANO_FLAGS'] = 'device=opencl1:0, floatX=float32'
 
 import numpy as np
 from keras.models import Sequential
@@ -39,6 +43,7 @@ features_test.columns = data.iloc[:, 1:20].columns
 
 print(features_train.head())
 # Feature Selection
+# Change number for best i features
 feature_count = 10
 def feature_select():
     classifier = LogisticRegression()
