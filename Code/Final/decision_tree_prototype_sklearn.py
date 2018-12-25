@@ -1,13 +1,10 @@
 import numpy as np
 import pandas as pa
 import matplotlib.pyplot as plt
-import graphviz
 from scipy.stats import randint
-from sklearn.feature_selection import RFE, SelectKBest, chi2
-from sklearn import tree
-from sklearn.datasets import load_iris
+from sklearn.feature_selection import RFE
 from sklearn.model_selection import train_test_split,RandomizedSearchCV
-from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, precision_recall_curve, average_precision_score, roc_curve, auc
 from sklearn.utils.fixes import signature
@@ -34,9 +31,29 @@ features_train = pa.DataFrame(scaler.transform(features_train))
 features_train.columns = data.iloc[:, 1:20].columns
 features_test = pa.DataFrame(scaler.transform(features_test))
 features_test.columns = data.iloc[:, 1:20].columns
-print(features_train.head())
+#print(features_train.head())
+def select_hyperparameters():
+    hyperparameter_dict = {"max_depth" : [3,None],
+                           "min_samples_leaf" : randint(1,100),
+                           "min_samples_split" : randint(2,100),
+                           "criterion" : ["gini", "entropy"],
+                           "splitter" : ["best", "random"]}
+    # Decision Tree Classifier
+    tree_clf = DecisionTreeClassifier()
 
-def feature_selection(feature_amount, ):
+    # Randomized Search Cross Validation
+    tree_cv = RandomizedSearchCV(tree_clf, hyperparameter_dict, cv = 5)
+
+    # Fit data to CV
+    tree_cv.fit(features_train, label_train)
+
+    # Check Tuned Hyperparameters and Scores
+    print("Tuned Decision Tree Hyperparameters: {}".format(tree_cv.best_params_))
+    print("Best Score: {}".format(tree_cv.best_score_))
+    return tree_cv
+tree_cv = select_hyperparameters()
+
+def feature_selection(feature_amount):
     classifier = LogisticRegression()
     rfe = RFE(classifier, feature_amount)
     fit = rfe.fit(features_train, label_train)
@@ -129,56 +146,3 @@ plt.xlim([0.0, 1.0])
 plt.title('2-class Precision-Recall curve: AP={0:0.2f}'.format(average_precision))
 plt.show()
 
-def select_hyperparameters():
-    hyperparameter_dict = {"max_depth" : [3,None],
-                           "min_samples_leaf" : randint(1,100),
-                           "min_samples_split" : randint(2,100),
-                           "criterion" : ["gini", "entropy"],
-                           "splitter" : ["best", "random"]}
-    # Decision Tree Classifier
-    tree_clf = DecisionTreeClassifier()
-
-    # Randomized Search Cross Validation
-    tree_cv = RandomizedSearchCV(tree_clf, hyperparameter_dict, cv = 5)
-
-    # Fit data to CV
-    tree_cv.fit(features_train, label_train)
-
-    # Check Tuned Hyperparameters and Scores
-    print("Tuned Decision Tree Hyperparameters: {}".format(tree_cv.best_params_))
-    print("Best Score: {}".format(tree_cv.best_score_))
-    return tree_cv
-#tree_cv = select_hyperparameters()
-#print(pa.DataFrame(features_train).head())
-# Hyperparameter Tuning
-# Setup The Parameters
-
-"""
-means = tree_cv.cv_results_['mean_test_score']
-stds = tree_cv.cv_results_['std_test_score']
-for mean, std, params in zip(means, stds, tree_cv.cv_results_['params']):
-    print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))
-    print()
-"""
-# Predict the Test set labels with best parameters
-#predictions = tree_cv.predict(features_test)
-# Evaluations
-# Confusion Matrix
-#print(confusion_matrix(label__test, predictions))
-#print(classification_report(label__test, predictions))
-#accuracy = (accuracy_score(label__test, predictions, normalize=True, sample_weight=None) * 100)
-#print("Accuracy:" + str(accuracy) + "%")
-
-"""
-# Tree Visualization
-iris = load_iris()
-clf = DecisionTreeClassifier()
-clf.fit(iris.data, iris.target)
-dot_data = tree.export_graphviz(clf, out_file=None,
-                     feature_names=iris.feature_names,
-                     class_names=iris.target_names,
-                     filled=True, rounded=True,
-                     special_characters=True)
-graph = graphviz.Source(dot_data)
-
-"""
